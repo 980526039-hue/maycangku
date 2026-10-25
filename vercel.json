@@ -1,0 +1,12 @@
+{
+  "framework": null,
+  "buildCommand": null,
+  "outputDirectory": ".",
+  "redirects": [
+    {
+      "source": "/粒子首屏.html",
+      "destination": "/",
+      "permanent": false
+    }
+  ]
+}
