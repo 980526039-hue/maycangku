@@ -12,10 +12,10 @@ const layer=document.createElement('canvas'),lc=layer.getContext('2d',{willReadF
 const shape=document.createElement('canvas'),sc=shape.getContext('2d',{willReadFrequently:true});shape.width=960;shape.height=480;
 const dissolve=document.createElement('canvas'),dc=dissolve.getContext('2d');
 let points=[],ready=false,started=false,w=0,h=0,dpr=1,pointer={x:-9999,y:-9999},energy=0,targetEnergy=0,previous=0,progress=0;
-let transform={x:0,y:0,scale:1},lastPixels=null,lastSample=-1;
-function resize(){w=canvas.clientWidth;h=canvas.clientHeight;dpr=Math.min(devicePixelRatio||1,compact?1:1.5);canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);dissolve.width=canvas.width;dissolve.height=canvas.height;}
+let transform={x:0,y:0,scale:1},lastPixels=null,lastSample=-1,autoProgress=0,autoElapsed=0;
+function resize(){w=canvas.clientWidth;h=canvas.clientHeight;dpr=Math.min(devicePixelRatio||1,1.5);canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);dissolve.width=canvas.width;dissolve.height=canvas.height;}
 resize();addEventListener('resize',resize);
-function play(){if(reduced||document.hidden||!heroVisible)return;if(!video.getAttribute('src')){video.src=compact?'media/hero-mobile.mp4':'media/hero-desktop.mp4';video.load();}video.play().then(()=>{started=true}).catch(()=>{});}
+function play(){if(reduced||document.hidden||!heroVisible)return;if(!video.getAttribute('src')){video.src=compact?'media/hero-mobile-hq.mp4':'media/hero-desktop-hq.mp4';video.load();}video.play().then(()=>{started=true}).catch(()=>{});}
 function move(e){const r=canvas.getBoundingClientRect();pointer.x=e.clientX-r.left;pointer.y=e.clientY-r.top;const x=Math.floor((pointer.x-transform.x)/transform.scale),y=Math.floor((pointer.y-transform.y)/transform.scale);const hit=ready&&x>=0&&x<960&&y>=0&&y<480&&lastPixels&&lastPixels[(y*960+x)*4+3]>20;targetEnergy=hit?1:0;if(hit&&!started)play();}
 canvas.addEventListener('pointermove',move);canvas.addEventListener('pointerdown',move);canvas.addEventListener('pointerleave',()=>targetEnergy=0);canvas.addEventListener('pointercancel',()=>targetEnergy=0);canvas.addEventListener('pointerup',e=>{if(e.pointerType!=='mouse')targetEnergy=0});
 addEventListener('wheel',()=>{if(!started)play()},{passive:true});addEventListener('touchmove',()=>{if(!started)play()},{passive:true});addEventListener('keydown',e=>{if(['PageDown','ArrowDown',' '].includes(e.key)&&!started)play()});
@@ -23,7 +23,7 @@ Promise.all([poster.decode(),mask.decode()]).then(()=>{
 sc.drawImage(mask,0,0,960,480);const pixels=sc.getImageData(0,0,960,480).data;lastPixels=pixels;
 let seed=17;function random(){seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;}
 if(!compact&&!reduced)for(let y=0;y<480;y+=particleStep)for(let x=0;x<960;x+=particleStep){if(pixels[(Math.floor(y)*960+Math.floor(x))*4+3]>128)points.push({x:x+random()*.25,y:y+random()*.25,ox:0,oy:0,a:random()*Math.PI*2,r:random(),phase:random()*6.28});}
-ready=true;loading.hidden=true;scheduleFrame();
+ready=true;loading.hidden=true;if(compact&&!reduced)play();scheduleFrame();
 }).catch(()=>loading.textContent='首屏素材加载失败，请重新打开页面。');
 let rafId=0,heroVisible=true,lastDraw=0,lastRenderedProgress=-1;
 addEventListener('resize',()=>{lastRenderedProgress=-1;scheduleFrame();});
@@ -36,7 +36,8 @@ function frame(t){
  if(t-lastDraw<1000/(compact?24:30)){scheduleFrame();return;}lastDraw=t;
  if(scrollY>document.querySelector('#intro').offsetHeight){previous=t;scheduleFrame();return;}
  const dt=Math.min(.05,(t-previous)/1000||.016);previous=t;
- const raw=Math.max(0,Math.min(1,scrollY/(document.querySelector('#intro').offsetHeight-h)));progress+=(raw-progress)*(1-Math.exp(-dt*12));
+ if(compact&&!reduced&&started&&video.readyState>=2){autoElapsed+=dt;const phase=Math.max(0,Math.min(1,(autoElapsed-.6)/5));autoProgress=.8*(phase*phase*(3-2*phase));}
+ const raw=Math.max(autoProgress,Math.max(0,Math.min(1,scrollY/(document.querySelector('#intro').offsetHeight-h))));progress+=(raw-progress)*(1-Math.exp(-dt*12));
  energy+=(targetEnergy-energy)*(1-Math.exp(-dt*5));
  if(!started&&energy<.001&&Math.abs(progress-lastRenderedProgress)<.0001){scheduleFrame();return;}lastRenderedProgress=progress;
  const zoom=1+Math.pow(Math.min(1,progress/.76),2.1)*8;
