@@ -1,0 +1,71 @@
+/* Phone layouts use normal row order rather than newspaper-style columns. */
+@media (max-width: 760px) {
+  html { -webkit-text-size-adjust: 100%; }
+  body.home header {
+    padding: 18px 20px;
+    padding-left: max(20px, env(safe-area-inset-left));
+    padding-right: max(20px, env(safe-area-inset-right));
+  }
+  body.home .logo { font-size: 26px; }
+  body.home nav { gap: 20px; font-size: 11px; }
+  body.home #intro { height: 150svh; }
+  body.home .hero-footer {
+    left: 20px; right: 20px;
+    bottom: max(24px, env(safe-area-inset-bottom));
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+  }
+  body.home .hero-footer h1 { font-size: 16px; line-height: 1.15; letter-spacing: -.4px; }
+  body.home .hero-footer a { font-size: 10px; gap: 12px; flex-wrap: wrap; }
+  body.home .hero-footer a span { font-size: 11px; }
+  body.home #work { padding: 84px 20px 28px; scroll-margin-top: 0; }
+  body.home .section-top { padding-bottom: 16px; margin-bottom: 24px; }
+  body.home .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    columns: auto;
+    gap: 30px;
+  }
+  body.home .work-shell { min-width: 0; }
+  body.home .project { margin: 0; padding: 0; }
+  body.home .project .work-cover {
+    width: 100%; height: auto;
+    aspect-ratio: 16 / 9 !important;
+    object-fit: cover;
+  }
+  body.home .caption { padding-top: 12px; }
+  body.home .caption strong { font-size: 15px; line-height: 1.3; }
+  body.home .caption small { display: none; }
+  body.home .contact { padding: 24px 20px 32px; }
+  body.home .project:hover .work-video,
+  body.home .project:hover img { transform: none; }
+
+  body.work-detail .layout {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 72px 20px 48px;
+    gap: 28px;
+  }
+  body.work-detail main { min-width: 0; }
+  body.work-detail .project-layout { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+  body.work-detail .number { font-size: 48px; }
+  body.work-detail .heading { font-size: clamp(44px, 12vw, 72px); margin-bottom: 30px; }
+  body.work-detail .project-title { gap: 10px; margin-bottom: 24px; }
+  body.work-detail .project-title h2 { font-size: 24px; overflow-wrap: anywhere; }
+  body.work-detail .copy { padding-left: 0; }
+  body.work-detail .metadata { font-size: 14px; line-height: 1.65; margin-bottom: 24px; }
+  body.work-detail .description { font-size: 14px; line-height: 1.75; margin-bottom: 26px; }
+  body.work-detail .media-block { margin-bottom: 28px; }
+  body.work-detail .pair { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  body.work-detail .small-heading { font-size: 22px; margin-top: 40px; }
+  body.work-detail .sidebar {
+    position: static; grid-row: 1;
+    display: flex; flex-wrap: wrap;
+    column-gap: 18px; row-gap: 8px;
+    font-size: 12px; line-height: 1.5;
+  }
+  body.work-detail .sidebar p { width: 100%; margin: 0 0 4px; }
+  body.work-detail .sidebar a { padding: 5px 0; }
+  body.work-detail .sidebar .all { margin-top: 0; }
+  body.work-detail .bottom { padding-top: 28px; flex-wrap: wrap; gap: 16px; }
+}
